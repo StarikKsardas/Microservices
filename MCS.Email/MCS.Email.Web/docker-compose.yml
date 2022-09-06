@@ -47,6 +47,16 @@ services:
     - USERNAME=a_lagun
     - PASSWORD=123QWEasd
     - ISSSL=false
+    - ISUSERABBITMQ=true
+    - RABBITMQ_HOSTNAME=rabbit
+    - RABBITMQ_PORT=5672
+    - RABBITMQ_USERNAME=a_lagun
+    - RABBITMQ_PASSWORD=200188
+    - RABBITMQ_EXCANGE_NAME=email
+    - RABBITMQ_PRODUCER_ROUTINGKEY=emailresult
+    - RABBITMQ_CONSUMER_ROUTINGKEY=email2send
+    - RABBITMQ_PRODUCER_QUEUE=emailresult
+    - RABBITMQ_CONSUMER_QUEUE=email2send_firsts
     networks:
     - elastic
   

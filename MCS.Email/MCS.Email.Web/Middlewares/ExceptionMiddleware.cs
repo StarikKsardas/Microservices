@@ -22,7 +22,7 @@ namespace MCS.Email.Web.Middlewares
             }
             catch (Exception ex)
             {
-                logger.LogError($"Error!!!{ex}");
+                logger.LogError($"Error!!!{httpContext.Items["Id_Message"]} {ex}");
                 await HandleExceptionAsync(httpContext, ex);
             }
         }

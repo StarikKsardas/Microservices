@@ -13,7 +13,7 @@ namespace MCS.Email.Infrastructure.Di
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            services.AddScoped<IEmailService, EmailService>();
+            services.AddSingleton<IEmailService, EmailService>();
             return services;
         }
     }

@@ -2,6 +2,7 @@
 using MCS.Email.Domain.Contracts.Models;
 using MCS.Email.Domain.Contracts.Services;
 using MCS.Email.Web.Contracts.Models;
+using MCS.Email.Web.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MimeKit;
@@ -14,26 +15,22 @@ namespace MCS.Email.Web.Controllers
     {
         private readonly ILogger<EmailController> logger;
         private readonly IEmailService emailService;
-        private readonly IMapper mapper;
+        private readonly IRemap remap;
 
-        public EmailController(ILogger<EmailController> logger, IEmailService emailService, IMapper mapper)
+        public EmailController(ILogger<EmailController> logger, IEmailService emailService, IRemap remap)
         { 
             this.logger = logger;
             this.emailService = emailService;
-            this.mapper = mapper;
+            this.remap = remap;
         }
 
         [HttpPost("Send")]
         public IActionResult Send([FromBody]EmailWeb emailWeb)
         {
+            HttpContext.Items.Add("Id_Message", emailWeb.Id);
             try
             {
-                var emailInfo = mapper.Map<EmailWeb, EmailInfo>(emailWeb);
-                emailInfo.MailboxAddresses = new List<MailboxAddress>();
-                foreach (var current in emailWeb.Emails)
-                {
-                    emailInfo.MailboxAddresses.Add(new MailboxAddress((current.Split('@'))[0], current));
-                }
+                var emailInfo = remap.RemapEmailWeb(emailWeb);
                 emailService.SendEmail(emailInfo, emailWeb.Id);
                 return Ok();
             }
@@ -46,14 +43,10 @@ namespace MCS.Email.Web.Controllers
         [HttpPost("SendAsync")]
         public async Task<IActionResult> SendAsync([FromBody] EmailWeb emailWeb)
         {
+            HttpContext.Items.Add("Id_Message", emailWeb.Id);
             try
             {
-                var emailInfo = mapper.Map<EmailWeb, EmailInfo>(emailWeb);
-                emailInfo.MailboxAddresses = new List<MailboxAddress>();
-                foreach (var current in emailWeb.Emails)
-                {
-                    emailInfo.MailboxAddresses.Add(new MailboxAddress((current.Split('@'))[0], current));
-                }
+                var emailInfo = remap.RemapEmailWeb(emailWeb);
                 await emailService.SendEmailAsync(emailInfo, emailWeb.Id);
                 return Ok();
             }
